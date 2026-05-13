@@ -1,6 +1,14 @@
+import sys
+
 import pandas as pd
 import re
 import os
+import time
+
+#带暂停的输出
+def tprint(s):
+    print(s)
+    time.sleep(1)
 
 class Menu(object):
     info = ["==== 学生成绩管理与分析系统 ====",
@@ -27,33 +35,36 @@ class Menu(object):
             print(s)
         self.transit()
     #获取选项
-    def get_choice(self):
+    @staticmethod
+    def get_choice(a, b):
         while True:
             sopt = input()
             if not sopt:
                 continue
             opt = int(sopt)
-            if 1<=opt<=8:
+            if a<=opt<=b:
                 return opt
             else:
-                print("输入有误，请重新输入！")
+                tprint("输入有误，请重新输入！")
     #转入功能
     def transit(self):
-        opt = self.get_choice()
+        opt = self.get_choice(1,8)
         if opt == 1:
             self.add_score()
+        elif opt == 2:
+            self.query()
     #成绩格式校验
-    def check(self, id, subject, score, name):
+    def check(self, sid, subject, score, name):
         pattern_id = r'^\d{8}$'
-        if not re.fullmatch(pattern_id, id):
+        if not re.fullmatch(pattern_id, sid):
             return False
         pattern_score = r'^(\d{1,2}|100)$'
         if not re.fullmatch(pattern_score, score):
             return False
-        if id not in self.df_scores.index:
-            self.df_scores.loc[id] = [name, pd.NA, pd.NA, pd.NA]
+        if sid not in self.df_scores.index:
+            self.df_scores.loc[sid] = [name, pd.NA, pd.NA, pd.NA]
             return True
-        if pd.isna(self.df_scores.loc[id, subject]):
+        if pd.isna(self.df_scores.loc[sid, subject]):
             return True
         else:
             return False
@@ -65,10 +76,38 @@ class Menu(object):
         pid,pname,psubject,pscore = input().split()
         if self.check(pid, psubject, pscore, pname):
             self.df_scores.loc[pid, psubject] = pscore
-            self.df_scores.to_csv("data/scores.csv")
-            print(f"添加成功！{self.df_scores.loc[pid]}")
+            self.df_scores.to_csv("data/scores.csv", header=False)
+            tprint(f"添加成功！\n {self.df_scores.loc[pid]}")
         else:
-            print("数据格式有误或重复添加！")
+            tprint("数据格式有误或重复添加！")
+
+    #格式化输出信息
+    def print_student(self, sid):
+        data = self.df_scores.loc[sid]
+        strid = sid
+        str(strid)
+        infos = [strid, data['name'], str(data['语文']), str(data['数学']), str(data['英语'])]
+        print(" ".join(infos))
+
+    #查询成绩
+    def query(self):
+        print("1.按学号查询")
+        print("2.列出所有")
+        print("请选择：")
+        opt = self.get_choice(1,2)
+        if opt == 1:
+            print("请输入学号：")
+            sid = input()
+            if sid in self.df_scores.index:
+                self.print_student(sid)
+            else:
+                tprint("该学号不存在！")
+        else:
+            print(" ".join(["id", "name", "语文", "数学", "英语"]))
+            for row in self.df_scores.itertuples():
+                self.print_student(row.Index)
+        tprint("")
+
 
 if __name__ == "__main__":
 
