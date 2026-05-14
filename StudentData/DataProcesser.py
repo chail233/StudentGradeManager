@@ -1,6 +1,10 @@
 import pandas as pd
 import re
 import time
+import matplotlib.pyplot as plt
+from numpy.ma.extras import average
+
+
 #带暂停的输出
 def tprint(s):
     print(s)
@@ -112,3 +116,43 @@ class StuData:
             self.df_scores.loc[sid, subject] = pd.NA
             self.save_df()
             tprint("删除成功！")
+
+    #数据清洗
+    def clean(self):
+        self.save_df()
+        #处理空值
+        self.df_scores.dropna(inplace=True)
+        #去除异常id值
+        for row in self.df_scores.itertuples():
+            if not re.fullmatch(self.pattern_id, row.Index):
+                self.df_scores.drop(row.Index, inplace=True)
+        #删除重复学生
+        rid = []
+        for row in self.df_scores.itertuples():
+            if row.Index in rid:
+                self.df_scores.drop(row.Index, inplace=True)
+            else:
+                rid.append(row.Index)
+        #处理异常分数
+        for row in self.df_scores.itertuples():
+            if not re.fullmatch(self.pattern_score, row.语文):
+                self.df_scores.loc[row.Index, "语文"] = 0
+            if not re.fullmatch(self.pattern_score, row.数学):
+                self.df_scores.loc[row.Index, "数学"] = 0
+            if not re.fullmatch(self.pattern_score, row.英语):
+                self.df_scores.loc[row.Index, "英语"] = 0
+        #处理名字文本
+        for row in self.df_scores.itertuples():
+            self.df_scores.loc[row.Index, "name"]=self.df_scores.loc[row.Index, "name"].strip()
+            self.df_scores.loc[row.Index, "name"]=self.df_scores.loc[row.Index, "name"].lower()
+        #保存
+        self.df_scores.to_csv("data/scores_clean.csv", header=False)
+        tprint("清洗完成！")
+
+
+    #数据可视化
+    def plot_average(self):
+        categories = ['语文', '数学', '英语']
+        values = [average(list(map(int, self.df_scores['语文']))), average(list(map(int, self.df_scores['数学']))), average(list(map(int, self.df_scores['英语'])))]
+        plt.bar(categories, values)
+        plt.show()

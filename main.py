@@ -54,7 +54,7 @@ class Menu(object):
         elif opt == 4:
             self.delele()
         elif opt == 5:
-            pass
+            self.clean()
         elif opt == 6:
             pass
         elif opt == 7:
@@ -94,6 +94,12 @@ class Menu(object):
             print("请输入学号 科目：")
             sid, subject = input()
             self.studata.delete_subject(sid, subject)
+
+    def clean(self):
+        self.studata.clean()
+    def plt(self):
+        print("")
+        opt = self.get_choice(1, 3)
 if __name__ == "__main__":
 
     menu = Menu()
