@@ -95,3 +95,20 @@ class StuData:
         self.df_scores.loc[sid, subject] = score
         self.save_df()
         tprint("修改成功！")
+
+    #删除成绩
+    def delete_all(self, sid):
+        if self.check_sid(sid):
+            self.df_scores.loc[sid, "语文"] = pd.NA
+            self.df_scores.loc[sid, "数学"] = pd.NA
+            self.df_scores.loc[sid, "英语"] = pd.NA
+            self.save_df()
+            tprint("删除成功！")
+    def delete_subject(self, sid, subject):
+        if self.check_sid(sid):
+            if subject not in self.subjects:
+                tprint("该科目不存在！")
+                return
+            self.df_scores.loc[sid, subject] = pd.NA
+            self.save_df()
+            tprint("删除成功！")

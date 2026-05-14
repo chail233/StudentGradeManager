@@ -52,7 +52,7 @@ class Menu(object):
         elif opt == 3:
             self.modify()
         elif opt == 4:
-            pass
+            self.delele()
         elif opt == 5:
             pass
         elif opt == 6:
@@ -82,6 +82,18 @@ class Menu(object):
         global Running
         Running = False
 
+    def delele(self):
+        print("1.按学号删除所有成绩")
+        print("2.按学号+科目删除单科成绩")
+        opt = self.get_choice(1, 2)
+        if opt == 1:
+            print("请输入学号：")
+            sid = input()
+            self.studata.delete_all(sid)
+        else:
+            print("请输入学号 科目：")
+            sid, subject = input()
+            self.studata.delete_subject(sid, subject)
 if __name__ == "__main__":
 
     menu = Menu()
