@@ -56,7 +56,7 @@ class Menu(object):
         elif opt == 5:
             self.clean()
         elif opt == 6:
-            pass
+            self.analyse()
         elif opt == 7:
             pass
         else:
@@ -100,6 +100,19 @@ class Menu(object):
     def plt(self):
         print("")
         opt = self.get_choice(1, 3)
+    def analyse(self):
+        print("1.全班")
+        print("2.分科")
+        print("3.个人")
+        print("4.筛选")
+        print("请选择分析类别:")
+        opt = self.get_choice(1, 4)
+        if opt == 1:
+            self.studata.analyse_class()
+        elif opt == 2:
+            self.studata.analyse_subject()
+        elif opt == 3:
+            self.studata.analyse_student()
 if __name__ == "__main__":
 
     menu = Menu()

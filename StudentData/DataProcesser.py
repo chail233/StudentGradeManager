@@ -147,9 +147,47 @@ class StuData:
             self.df_scores.loc[row.Index, "name"]=self.df_scores.loc[row.Index, "name"].lower()
         #保存
         self.df_scores.to_csv("data/scores_clean.csv", header=False)
-        tprint("清洗完成！")
+        tprint("清洗完成！已生成清洗后文件：data/scores_clean.csv")
 
-
+    #成绩统计分析
+    #统计全班
+    def analyse_class(self):
+        self.clean()
+        tprint(f"分数总和：{self.df_scores.iloc[:, 1:4].astype('int').sum().sum()}")
+        tprint(f"平均分：{self.df_scores.iloc[:, 1:4].astype('int').sum(axis=1).mean():.2f}")
+        tprint(f"最高分{self.df_scores.iloc[:, 1:4].astype('int').sum(axis=1).max()}")
+        tprint(f"最低分{self.df_scores.iloc[:, 1:4].astype('int').sum(axis=1).min()}")
+        for subject in self.subjects:
+            tprint(f"{subject}及格率：{((self.df_scores[subject].astype('int')>=60).sum() / len(self.df_scores))*100:.2f}%")
+        for subject in self.subjects:
+            tprint(f"{subject}优秀率：{((self.df_scores[subject].astype('int')>=90).sum() / len(self.df_scores))*100:.2f}%")
+    #分科统计
+    def analyse_subject(self):
+        self.clean()
+        for subject in self.subjects:
+            tprint(f"{subject}平均分：{self.df_scores[subject].astype('int').mean():.2f}")
+        for subject in self.subjects:
+            df_sorted = self.df_scores.sort_values(by=[subject], ascending=False, inplace=False)
+            print(f"{subject}排名：")
+            cnt = 1
+            for row in df_sorted.itertuples():
+                idx = row.Index
+                tprint(f"{cnt}. {self.df_scores.loc[idx, 'name']}:{self.df_scores.loc[idx, subject]}分")
+                cnt += 1
+    #个人统计
+    def analyse_student(self):
+        self.clean()
+        tdf = self.df_scores.copy(deep=True)
+        tdf["s"] = tdf.iloc[:, 1:4].astype('int').sum(axis=1)
+        tdf["mean"] = tdf.iloc[:, 1:4].astype('int').mean(axis=1)
+        tdf.sort_values(by=["s"], ascending=False, inplace=True)
+        cnt = 1
+        for row in tdf.itertuples():
+            idx = row.Index
+            print(f"{cnt}.{tdf.loc[idx, 'name']}:")
+            tprint(f"总分{tdf.loc[idx, 's']}")
+            tprint(f"平均分{tdf.loc[idx, 'mean']:.2f}")
+            cnt += 1
     #数据可视化
     def plot_average(self):
         categories = ['语文', '数学', '英语']
