@@ -1,3 +1,5 @@
+from cProfile import label
+
 import pandas as pd
 import re
 import time
@@ -188,9 +190,34 @@ class StuData:
             tprint(f"总分{tdf.loc[idx, 's']}")
             tprint(f"平均分{tdf.loc[idx, 'mean']:.2f}")
             cnt += 1
+    #筛选
+    def filter(self):
+        self.clean()
+        print("不及格学生：")
+        for i in range(len(self.df_scores.index)):
+            if((self.df_scores.iloc[i, 1:4].astype('int')<60).sum()>0):
+                tprint(self.df_scores.iloc[i,0])
+        print("高分学生：")
+        for i in range(len(self.df_scores.index)):
+            if((self.df_scores.iloc[i, 1:4].astype('int')>=90).sum()==3):
+                tprint(self.df_scores.iloc[i,0])
+
     #数据可视化
-    def plot_average(self):
-        categories = ['语文', '数学', '英语']
-        values = [average(list(map(int, self.df_scores['语文']))), average(list(map(int, self.df_scores['数学']))), average(list(map(int, self.df_scores['英语'])))]
+    def plt_average(self):
+        self.clean()
+        categories = ['Chinese', 'Math', 'English']
+        values = [self.df_scores[subject].astype('int').mean() for subject in self.subjects]
         plt.bar(categories, values)
+        print("图表已保存！")
+        plt.savefig("data/average.png")
+        plt.show()
+    def plt_pie(self):
+        self.clean()
+        scores = self.df_scores.iloc[:, 1:4].astype('int')
+        sizes = [(scores < 60).sum().sum(), ((scores >= 60) & (scores < 80)).sum().sum(),
+                 ((scores >= 80) & (scores < 90)).sum().sum(), (scores >= 90).sum().sum()]
+        labels = ['Not Pass', 'Pass', 'Good', 'Excellent']
+        plt.pie(sizes, labels=labels, autopct='%1.1f%%')
+        print("图表已保存！")
+        plt.savefig("data/pie.png")
         plt.show()

@@ -58,7 +58,7 @@ class Menu(object):
         elif opt == 6:
             self.analyse()
         elif opt == 7:
-            pass
+            self.vision()
         else:
             self.exit_program()
 
@@ -113,6 +113,18 @@ class Menu(object):
             self.studata.analyse_subject()
         elif opt == 3:
             self.studata.analyse_student()
+        else:
+            self.studata.filter()
+    def vision(self):
+        print("1.各科平均分柱状图")
+        print("2.成绩分段饼图")
+        print("请选择：")
+        opt = self.get_choice(1, 2)
+        if opt == 1:
+            self.studata.plt_average()
+        elif opt == 2:
+            self.studata.plt_pie()
+
 if __name__ == "__main__":
 
     menu = Menu()
