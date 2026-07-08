@@ -1,7 +1,4 @@
-from rich.markup import render
-
 from StudentData import DataProcesser
-from flask import Flask, render_template
 
 path = "data/scores.csv"
 Running = True
@@ -129,13 +126,8 @@ class Menu(object):
         elif opt == 2:
             self.studata.plt_pie()
 
-app = Flask(__name__)
-@app.route("/")
-def index():
-    return render_template('index.html')
-if __name__ == "__main__":
 
-    app.run(debug=True)
-    # menu = Menu()
-    # while Running:
-    #     menu.run()
+if __name__ == "__main__":
+    menu = Menu()
+    while Running:
+        menu.run()

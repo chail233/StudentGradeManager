@@ -1,10 +1,7 @@
-from cProfile import label
-
 import pandas as pd
 import re
 import time
 import matplotlib.pyplot as plt
-from numpy.ma.extras import average
 
 
 #带暂停的输出
