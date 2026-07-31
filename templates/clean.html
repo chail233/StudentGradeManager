@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}数据清洗 - 学生成绩管理系统{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="border-start border-primary border-4 ps-3">
+            <i class="bi bi-eraser"></i> 数据清洗
+        </h2>
+        <p class="text-muted ms-4 ps-1">清洗原始数据，去除空值、异常值，格式化文本</p>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> 清洗说明</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-danger rounded-pill fs-6">1</span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6>处理空值</h6>
+                                <p class="text-muted small mb-0">删除所有包含空值（NaN）的行，确保数据完整性</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-warning rounded-pill fs-6">2</span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6>去除异常 ID</h6>
+                                <p class="text-muted small mb-0">删除不符合8位数字格式的学号记录</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-info rounded-pill fs-6">3</span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6>删除重复学生</h6>
+                                <p class="text-muted small mb-0">去除学号重复的冗余记录，保留唯一数据</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-success rounded-pill fs-6">4</span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6>处理异常分数</h6>
+                                <p class="text-muted small mb-0">将超出 0-100 范围的分数修正为 0 分</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <span class="badge bg-secondary rounded-pill fs-6">5</span>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6>格式化姓名文本</h6>
+                                <p class="text-muted small mb-0">去除姓名首尾空格，统一转换为小写字母</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0"><i class="bi bi-gear"></i> 执行清洗</h5>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <div class="text-center mb-3">
+                    <div class="display-1 text-muted">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+                    <p class="text-muted mt-2">
+                        原始数据：<strong>{{ origin_count }}</strong> 条记录
+                    </p>
+                </div>
+                <button type="button" class="btn btn-warning btn-lg w-100 mt-auto" id="runCleanBtn">
+                    <i class="bi bi-play-fill"></i> 开始清洗
+                </button>
+                <div id="cleanResult" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 清洗结果 -->
+<div class="row g-3">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-file-earmark-check"></i> 清洗数据结果</h5>
+                {% if clean_info %}
+                <span class="badge bg-success rounded-pill">{{ clean_info.count }} 条记录</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if clean_info and clean_info.records %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-success">
+                            <tr>
+                                <th class="ps-3">#</th>
+                                <th>学号</th>
+                                <th>姓名</th>
+                                <th>语文</th>
+                                <th>数学</th>
+                                <th class="pe-3">英语</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in clean_info.records %}
+                            <tr>
+                                <td class="ps-3">{{ loop.index }}</td>
+                                <td><code>{{ r.id }}</code></td>
+                                <td><strong>{{ r.name }}</strong></td>
+                                <td>
+                                    {% if r.语文 and r.语文 != 'nan' and r.语文 != '' %}
+                                    <span class="badge {% if r.语文|int >= 90 %}bg-success{% elif r.语文|int >= 60 %}bg-info{% else %}bg-danger{% endif %}">
+                                        {{ r.语文 }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if r.数学 and r.数学 != 'nan' and r.数学 != '' %}
+                                    <span class="badge {% if r.数学|int >= 90 %}bg-success{% elif r.数学|int >= 60 %}bg-info{% else %}bg-danger{% endif %}">
+                                        {{ r.数学 }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="pe-3">
+                                    {% if r.英语 and r.英语 != 'nan' and r.英语 != '' %}
+                                    <span class="badge {% if r.英语|int >= 90 %}bg-success{% elif r.英语|int >= 60 %}bg-info{% else %}bg-danger{% endif %}">
+                                        {{ r.英语 }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% elif clean_exists %}
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle"></i> 清洗文件已存在，但无有效数据。
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="display-4 text-muted mb-3">
+                        <i class="bi bi-erasher"></i>
+                    </div>
+                    <p class="text-muted">尚未执行清洗操作，点击上方按钮开始清洗</p>
+                    <p class="text-muted small">清洗后数据将保存至 <code>data/scores_clean.csv</code></p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function() {
+    $('#runCleanBtn').on('click', function() {
+        var $btn = $(this);
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> 清洗中...');
+        
+        $.post('/clean/run', function(data) {
+            if (data.success) {
+                $('#cleanResult').html('<div class="alert alert-success py-2 mb-0">' + data.message + '</div>');
+                setTimeout(function() { location.reload(); }, 1500);
+            } else {
+                var errors = data.errors.join('<br>');
+                $('#cleanResult').html('<div class="alert alert-danger py-2 mb-0">' + errors + '</div>');
+                $btn.prop('disabled', false).html('<i class="bi bi-play-fill"></i> 开始清洗');
+            }
+        }).fail(function() {
+            $('#cleanResult').html('<div class="alert alert-danger py-2 mb-0">请求失败，请重试</div>');
+            $btn.prop('disabled', false).html('<i class="bi bi-play-fill"></i> 开始清洗');
+        });
+    });
+});
+</script>
+{% endblock %}

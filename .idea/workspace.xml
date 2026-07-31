@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="86904687-2dc3-416d-8ea9-253739dcd2b1" name="更改" comment="完成项目">
+    <list default="true" id="86904687-2dc3-416d-8ea9-253739dcd2b1" name="更改" comment="refactor">
       <change afterPath="$PROJECT_DIR$/.idea/StudentGradeManager.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
@@ -12,9 +12,6 @@
       <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css/appstyle.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,9 +21,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
         <option value="CSS File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -47,9 +44,72 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/chail233/StudentGradeManager.git&quot;,
-    &quot;accountId&quot;: &quot;1789c486-cedc-4f17-88e9-905757f27ea1&quot;
+    &quot;accountId&quot;: &quot;51df4d09-fbd6-46a2-afef-8c2fe1477bff&quot;
   }
 }</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.000040110743607" />
+      <entry key="S2" value="1.1736863408871006" />
+      <entry key="S5" value="1.9556148554671404" />
+      <entry key="S10" value="2.691895187335349" />
+      <entry key="S30" value="3.4839838870187627" />
+      <entry key="S60" value="3.8451483285337464" />
+      <entry key="M2" value="4.521919771779024" />
+      <entry key="M5" value="7.9328268536799165" />
+      <entry key="M10" value="14.445293233450643" />
+      <entry key="M15" value="19.063577385991596" />
+      <entry key="M30" value="26.116850413138057" />
+      <entry key="H1" value="30.964659673485748" />
+      <entry key="H2" value="33.81637589812091" />
+      <entry key="H4" value="35.364277413859966" />
+      <entry key="D1" value="36.72106342616217" />
+      <entry key="W1" value="36.95999431755549" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="2.192917557139509E-142" />
+      <entry key="S2" value="5.8990978923700305E-36" />
+      <entry key="S5" value="1.6106348155299773E-14" />
+      <entry key="S10" value="2.461122628839895E-7" />
+      <entry key="S30" value="0.01689816734047828" />
+      <entry key="S60" value="0.3001219215478224" />
+      <entry key="M2" value="1.3806417992919138" />
+      <entry key="M5" value="5.660565375359159" />
+      <entry key="M10" value="12.928268438918614" />
+      <entry key="M15" value="17.945534962568544" />
+      <entry key="M30" value="25.50257524244605" />
+      <entry key="H1" value="30.64439435850971" />
+      <entry key="H2" value="33.6531978156998" />
+      <entry key="H4" value="35.281969549062524" />
+      <entry key="D1" value="36.70724993301896" />
+      <entry key="W1" value="36.958018683771094" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.8888426811665702" />
+      <entry key="MS500" value="0.976748117633798" />
+      <entry key="S2" value="1.1672316842950106" />
+      <entry key="S5" value="1.9519812323278534" />
+      <entry key="S10" value="2.6895844246265996" />
+      <entry key="S30" value="3.4992349844308874" />
+      <entry key="S60" value="4.138073793712297" />
+      <entry key="M2" value="5.886084067357832" />
+      <entry key="M5" value="13.566611776204166" />
+      <entry key="M10" value="27.342933534145885" />
+      <entry key="M15" value="36.980631239135136" />
+      <entry key="M30" value="51.59903847756178" />
+      <entry key="H1" value="61.5967489290756" />
+      <entry key="H2" value="67.46280015316202" />
+      <entry key="H4" value="70.64269164485796" />
+      <entry key="D1" value="73.4276961849572" />
+      <entry key="W1" value="73.91792421418218" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -63,18 +123,28 @@
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Python.DataProcesser.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;deving&quot;,
     &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Python/StudentGradeManager&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.LLMConfigurable&quot;
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -82,7 +152,7 @@
       <recent name="D:\Python\StudentGradeManager\static\css" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.app">
     <configuration name="DataProcesser" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="StudentGradeManager" />
       <option name="ENV_FILES" value="" />
@@ -96,7 +166,33 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/StudentData/DataProcesser.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="StudentGradeManager" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -118,6 +214,8 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -140,6 +238,8 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="true" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -149,11 +249,17 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.app" />
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-c7e53b3be11b-JavaScript-WS-253.28294.332" />
+        <option value="bundled-python-sdk-c59985aa861c-c2ffad84badb-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-261.24374.152" />
       </set>
     </attachedChunks>
   </component>
@@ -164,7 +270,9 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1778578163740</updated>
-      <workItem from="1779715826632" duration="1134000" />
+      <workItem from="1779715826632" duration="1968000" />
+      <workItem from="1779797729298" duration="7000" />
+      <workItem from="1781954178027" duration="283000" />
     </task>
     <task id="LOCAL-00001" summary="完成基本菜单，添加README,scores.csv">
       <option name="closed" value="true" />
@@ -230,7 +338,23 @@
       <option name="project" value="LOCAL" />
       <updated>1779174233784</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="添加前端文件">
+      <option name="closed" value="true" />
+      <created>1779717121280</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1779717121280</updated>
+    </task>
+    <task id="LOCAL-00010" summary="refactor">
+      <option name="closed" value="true" />
+      <created>1783500585977</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1783500585977</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -245,6 +369,8 @@
     <MESSAGE value="完成数据清洗的功能" />
     <MESSAGE value="基本完成数据分析" />
     <MESSAGE value="完成项目" />
-    <option name="LAST_COMMIT_MESSAGE" value="完成项目" />
+    <MESSAGE value="添加前端文件" />
+    <MESSAGE value="refactor" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor" />
   </component>
 </project>
