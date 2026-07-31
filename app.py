@@ -1,9 +1,14 @@
 import os
 import re
+from datetime import datetime
 import matplotlib
 matplotlib.use('Agg')  # 非交互式后端，防止 plt.show() 阻塞
 import matplotlib.pyplot as plt
 import pandas as pd
+
+# 设置 Matplotlib 中文字体
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'WenQuanYi Micro Hei', 'Noto Sans CJK SC', 'DejaVu Sans']
+plt.rcParams['axes.unicode_minus'] = False
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from StudentData.DataProcesser import StuData
 
@@ -28,9 +33,11 @@ def get_stu_data():
 
 
 def df_to_list(df):
-    """将 DataFrame 转换为前端可用的列表"""
+    """将 DataFrame 转换为前端可用的列表（过滤掉占位行）"""
     records = []
     for idx, row in df.iterrows():
+        if str(idx) == 'placeholder':
+            continue
         records.append({
             'id': idx,
             'name': row.get('name', ''),
@@ -86,6 +93,13 @@ def get_stats():
         }
     except Exception:
         return None
+
+# ==================== 模板上下文处理器 ====================
+
+@app.context_processor
+def inject_current_year():
+    """注入当前年份到所有模板"""
+    return {'current_year': datetime.now().year}
 
 
 # ==================== 路由 ====================
@@ -326,17 +340,58 @@ def analysis():
 def charts():
     """可视化图表页面"""
     try:
-        # 生成图表
         stu = get_stu_data()
         df = stu.get_df()
         if df.empty:
             return render_template('charts.html', active_page='charts', has_data=False)
 
-        # 孩子使用 StuData 的方法生成图表
-        stu.plt_average()
-        stu.plt_pie()
-
+        # 直接使用 DataFrame 计算，避免调用 StuData 的 plt_average/plt_pie（它们会反复 clean 并调用 plt.show）
         score_df = df[SUBJECTS].apply(pd.to_numeric, errors='coerce')
+        if score_df.empty:
+            return render_template('charts.html', active_page='charts', has_data=False)
+
+        # 生成 Matplotlib 图表并保存到 static/images/
+        img_dir = os.path.join('static', 'images')
+        os.makedirs(img_dir, exist_ok=True)
+
+        # 各科平均分柱状图
+        plt.figure(figsize=(6, 4))
+        subjects_cn = SUBJECTS
+        values = [score_df[s].mean() for s in SUBJECTS]
+        colors = ['#1d4ed8', '#15803d', '#b45309']
+        bars = plt.bar(subjects_cn, values, color=colors, width=0.5, edgecolor='white')
+        for bar, v in zip(bars, values):
+            plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1,
+                     f'{v:.1f}', ha='center', va='bottom', fontsize=12)
+        plt.title('各科平均分', fontsize=14, pad=15)
+        plt.ylabel('分数')
+        plt.ylim(0, 100)
+        plt.grid(axis='y', alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(os.path.join(img_dir, 'average.png'), dpi=100)
+        plt.close()
+
+        # 成绩等级分布饼图
+        plt.figure(figsize=(6, 5))
+        pie_values = [
+            int((score_df < 60).sum().sum()),
+            int(((score_df >= 60) & (score_df < 80)).sum().sum()),
+            int(((score_df >= 80) & (score_df < 90)).sum().sum()),
+            int((score_df >= 90).sum().sum())
+        ]
+        pie_labels = ['不及格 (<60)', '及格 (60-79)', '良好 (80-89)', '优秀 (90-100)']
+        pie_colors = ['#dc2626', '#ca8a04', '#15803d', '#1d4ed8']
+        wedges, texts, autotexts = plt.pie(
+            pie_values, labels=pie_labels, colors=pie_colors,
+            autopct='%1.1f%%', startangle=90, pctdistance=0.85
+        )
+        for t in autotexts:
+            t.set_fontsize(11)
+        plt.title('成绩等级分布', fontsize=14, pad=15)
+        plt.axis('equal')
+        plt.tight_layout()
+        plt.savefig(os.path.join(img_dir, 'pie.png'), dpi=100)
+        plt.close()
 
         # 准备图表数据供前端 ECharts 使用
         chart_data = {
@@ -345,13 +400,8 @@ def charts():
                 'values': [round(score_df[s].mean(), 2) for s in SUBJECTS]
             },
             'pie_distribution': {
-                'labels': ['不及格 (<60)', '及格 (60-79)', '良好 (80-89)', '优秀 (90-100)'],
-                'values': [
-                    int((score_df < 60).sum().sum()),
-                    int(((score_df >= 60) & (score_df < 80)).sum().sum()),
-                    int(((score_df >= 80) & (score_df < 90)).sum().sum()),
-                    int((score_df >= 90).sum().sum())
-                ]
+                'labels': pie_labels,
+                'values': pie_values
             },
             'student_comparison': {
                 'names': [str(row.get('name', '')) for _, row in df.iterrows()],

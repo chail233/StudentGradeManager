@@ -1,176 +1,89 @@
 {% extends "base.html" %}
-{% block title %}仪表盘 - 学生成绩管理系统{% endblock %}
+{% block title %}概览 - 学生成绩管理{% endblock %}
+{% block page_heading %}概览{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="border-start border-primary border-4 ps-3">
-            <i class="bi bi-speedometer2"></i> 系统仪表盘
-        </h2>
-        <p class="text-muted ms-4 ps-1">学生成绩数据概览与核心指标</p>
-    </div>
+<div class="page-intro">
+    <h1>数据概览</h1>
+    <p>当前班级成绩核心指标</p>
 </div>
 
 {% if stats and stats.has_data != False %}
-<!-- 核心指标卡片 -->
-<div class="row g-3 mb-4">
-    <div class="col-xl-2 col-md-4 col-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <div class="display-6 text-primary mb-2">
-                    <i class="bi bi-people-fill"></i>
-                </div>
-                <h5 class="card-title text-muted mb-0">学生总数</h5>
-                <p class="display-6 fw-bold text-primary mt-2 mb-0">{{ stats.total_students }}</p>
-            </div>
-        </div>
+
+<div class="metric-grid">
+    <div class="metric accent">
+        <div class="metric-label">学生总数</div>
+        <div class="metric-value">{{ stats.total_students }}</div>
     </div>
-    <div class="col-xl-2 col-md-4 col-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <div class="display-6 text-success mb-2">
-                    <i class="bi bi-calculator"></i>
-                </div>
-                <h5 class="card-title text-muted mb-0">总分合计</h5>
-                <p class="display-6 fw-bold text-success mt-2 mb-0">{{ stats.total_scores }}</p>
-            </div>
-        </div>
+    <div class="metric">
+        <div class="metric-label">总分合计</div>
+        <div class="metric-value">{{ stats.total_scores }}</div>
     </div>
-    <div class="col-xl-2 col-md-4 col-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <div class="display-6 text-info mb-2">
-                    <i class="bi bi-graph-up-arrow"></i>
-                </div>
-                <h5 class="card-title text-muted mb-0">平均总分</h5>
-                <p class="display-6 fw-bold text-info mt-2 mb-0">{{ stats.avg_score }}</p>
-            </div>
-        </div>
+    <div class="metric success">
+        <div class="metric-label">平均总分</div>
+        <div class="metric-value">{{ stats.avg_score }}</div>
     </div>
-    <div class="col-xl-2 col-md-4 col-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <div class="display-6 text-warning mb-2">
-                    <i class="bi bi-trophy-fill"></i>
-                </div>
-                <h5 class="card-title text-muted mb-0">最高总分</h5>
-                <p class="display-6 fw-bold text-warning mt-2 mb-0">{{ stats.max_score }}</p>
-            </div>
-        </div>
+    <div class="metric warning">
+        <div class="metric-label">最高总分</div>
+        <div class="metric-value">{{ stats.max_score }}</div>
     </div>
-    <div class="col-xl-2 col-md-4 col-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <div class="display-6 text-danger mb-2">
-                    <i class="bi bi-arrow-down-circle"></i>
-                </div>
-                <h5 class="card-title text-muted mb-0">最低总分</h5>
-                <p class="display-6 fw-bold text-danger mt-2 mb-0">{{ stats.min_score }}</p>
-            </div>
-        </div>
+    <div class="metric danger">
+        <div class="metric-label">最低总分</div>
+        <div class="metric-value">{{ stats.min_score }}</div>
     </div>
-    <div class="col-xl-2 col-md-4 col-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center">
-                <div class="display-6 text-success mb-2">
-                    <i class="bi bi-check-circle-fill"></i>
+    <div class="metric success">
+        <div class="metric-label">全科及格率</div>
+        <div class="metric-value sm">{{ stats.pass_rate }}%</div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-head">
+        <h2>各科平均分</h2>
+    </div>
+    <div class="panel-body">
+        <div class="subject-grid">
+            {% for subject in ['语文', '数学', '英语'] %}
+            <div class="subject-block">
+                <div class="name">{{ subject }}</div>
+                <div class="score {% if stats.subject_avgs[subject] >= 80 %}text-success{% elif stats.subject_avgs[subject] >= 60 %}text-warning{% else %}text-danger{% endif %}">
+                    {{ stats.subject_avgs[subject] }}
                 </div>
-                <h5 class="card-title text-muted mb-0">全科及格率</h5>
-                <p class="display-6 fw-bold text-success mt-2 mb-0">{{ stats.pass_rate }}%</p>
+                <div class="meta">
+                    <span class="tag tag-green">及格 {{ stats.subject_pass[subject] }}%</span>
+                    <span class="tag tag-yellow">优秀 {{ stats.subject_excellent[subject] }}%</span>
+                </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </div>
 
-<!-- 分科统计 -->
-<div class="row g-3 mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0"><i class="bi bi-bar-chart-fill"></i> 各科平均分</h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    {% for subject in ['语文', '数学', '英语'] %}
-                    <div class="col-md-4">
-                        <div class="text-center p-3 rounded bg-light">
-                            <h6 class="text-muted">{{ subject }}</h6>
-                            <p class="display-5 fw-bold mb-0 
-                                {% if stats.subject_avgs[subject] >= 80 %}text-success
-                                {% elif stats.subject_avgs[subject] >= 60 %}text-warning
-                                {% else %}text-danger{% endif %}">
-                                {{ stats.subject_avgs[subject] }}
-                            </p>
-                            <small class="text-muted">分</small>
-                            <div class="mt-2">
-                                <span class="badge bg-success me-1">及格率 {{ stats.subject_pass[subject] }}%</span>
-                                <span class="badge bg-warning text-dark">优秀率 {{ stats.subject_excellent[subject] }}%</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+<div class="panel">
+    <div class="panel-head">
+        <h2>快捷入口</h2>
     </div>
-</div>
-
-<!-- 快速操作 -->
-<div class="row g-3">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> 快速操作</h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-2">
-                    <div class="col-md-3 col-6">
-                        <a href="{{ url_for('grades') }}" class="btn btn-outline-primary w-100 py-3">
-                            <i class="bi bi-plus-circle d-block mb-1" style="font-size: 1.5rem;"></i>
-                            成绩管理
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <a href="{{ url_for('analysis') }}" class="btn btn-outline-success w-100 py-3">
-                            <i class="bi bi-bar-chart-line d-block mb-1" style="font-size: 1.5rem;"></i>
-                            统计分析
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <a href="{{ url_for('charts') }}" class="btn btn-outline-info w-100 py-3">
-                            <i class="bi bi-pie-chart d-block mb-1" style="font-size: 1.5rem;"></i>
-                            可视化图表
-                        </a>
-                    </div>
-                    <div class="col-md-3 col-6">
-                        <a href="{{ url_for('clean_page') }}" class="btn btn-outline-warning w-100 py-3">
-                            <i class="bi bi-eraser d-block mb-1" style="font-size: 1.5rem;"></i>
-                            数据清洗
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <div class="panel-body">
+        <div class="link-grid">
+            <a href="{{ url_for('grades') }}" class="quick-link">成绩录入</a>
+            <a href="{{ url_for('analysis') }}" class="quick-link">统计分析</a>
+            <a href="{{ url_for('charts') }}" class="quick-link">图表</a>
+            <a href="{{ url_for('clean_page') }}" class="quick-link">数据清洗</a>
         </div>
     </div>
 </div>
 
 {% else %}
-<!-- 无数据提示 -->
-<div class="row">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-5">
-                <div class="display-1 text-muted mb-4">
-                    <i class="bi bi-inbox"></i>
-                </div>
-                <h3 class="text-muted">暂无学生数据</h3>
-                <p class="text-muted mb-4">请先添加学生成绩数据</p>
-                <a href="{{ url_for('grades') }}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-plus-circle"></i> 前往成绩管理
-                </a>
-            </div>
+
+<div class="panel">
+    <div class="panel-body">
+        <div class="empty-state">
+            <h3>暂无数据</h3>
+            <p>还没有录入任何学生成绩</p>
+            <a href="{{ url_for('grades') }}" class="btn btn-primary">前往录入</a>
         </div>
     </div>
 </div>
+
 {% endif %}
 {% endblock %}

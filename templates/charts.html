@@ -1,211 +1,155 @@
 {% extends "base.html" %}
-{% block title %}可视化图表 - 学生成绩管理系统{% endblock %}
+{% block title %}图表 - 学生成绩管理{% endblock %}
+{% block page_heading %}图表{% endblock %}
 
 {% block extra_head %}
-<!-- ECharts -->
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-<style>
-    .chart-container {
-        width: 100%;
-        height: 400px;
-    }
-</style>
 {% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="border-start border-primary border-4 ps-3">
-            <i class="bi bi-pie-chart"></i> 可视化图表
-        </h2>
-        <p class="text-muted ms-4 ps-1">成绩数据可视化展示，直观了解学业状况</p>
-    </div>
+<div class="page-intro">
+    <h1>可视化图表</h1>
+    <p>成绩分布与对比</p>
 </div>
 
 {% if has_data %}
 
-<!-- Matplotlib 生成的图片 -->
-<div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0"><i class="bi bi-bar-chart-fill text-primary"></i> 各科平均分（Matplotlib）</h5>
-            </div>
-            <div class="card-body text-center">
-                <img src="{{ url_for('static', filename='../data/average.png') }}" 
-                     class="img-fluid rounded" alt="各科平均分柱状图"
-                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'text-muted py-5\'><i class=\'bi bi-image\' style=\'font-size: 3rem;\'></i><p class=\'mt-2\'>图表生成中，请先刷新页面</p></div>';">
-            </div>
+<div class="split-grid">
+    <div class="panel">
+        <div class="panel-head"><h2>各科平均分</h2></div>
+        <div class="panel-body">
+            <img src="{{ url_for('static', filename='images/average.png') }}"
+                 class="chart-img" alt="各科平均分"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <p class="text-muted mb-0" style="display:none;font-size:13px;text-align:center;padding:40px 0;">暂无图表</p>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0"><i class="bi bi-pie-chart-fill text-success"></i> 成绩分布（Matplotlib）</h5>
-            </div>
-            <div class="card-body text-center">
-                <img src="{{ url_for('static', filename='../data/pie.png') }}" 
-                     class="img-fluid rounded" alt="成绩分布饼图"
-                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'text-muted py-5\'><i class=\'bi bi-image\' style=\'font-size: 3rem;\'></i><p class=\'mt-2\'>图表生成中，请先刷新页面</p></div>';">
-            </div>
+    <div class="panel">
+        <div class="panel-head"><h2>成绩等级分布</h2></div>
+        <div class="panel-body">
+            <img src="{{ url_for('static', filename='images/pie.png') }}"
+                 class="chart-img" alt="成绩分布"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <p class="text-muted mb-0" style="display:none;font-size:13px;text-align:center;padding:40px 0;">暂无图表</p>
         </div>
     </div>
 </div>
 
-<!-- ECharts 交互式图表 -->
-<div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0"><i class="bi bi-bar-chart-fill text-info"></i> 各科平均分对比</h5>
-            </div>
-            <div class="card-body">
-                <div id="avgChart" class="chart-container"></div>
-            </div>
+<div class="split-grid">
+    <div class="panel">
+        <div class="panel-head"><h2>各科平均分对比</h2></div>
+        <div class="panel-body">
+            <div id="avgChart" class="chart-container"></div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0"><i class="bi bi-pie-chart-fill text-warning"></i> 成绩等级分布</h5>
-            </div>
-            <div class="card-body">
-                <div id="pieChart" class="chart-container"></div>
-            </div>
+    <div class="panel">
+        <div class="panel-head"><h2>等级分布</h2></div>
+        <div class="panel-body">
+            <div id="pieChart" class="chart-container"></div>
         </div>
     </div>
 </div>
 
-<div class="row g-3">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0"><i class="bi bi-person-lines-fill text-success"></i> 学生个人成绩对比</h5>
-            </div>
-            <div class="card-body">
-                <div id="studentChart" class="chart-container" style="height: 500px;"></div>
-            </div>
-        </div>
+<div class="panel">
+    <div class="panel-head"><h2>个人成绩对比</h2></div>
+    <div class="panel-body">
+        <div id="studentChart" class="chart-container" style="height:420px;"></div>
     </div>
 </div>
 
 {% else %}
-<div class="row">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body text-center py-5">
-                <div class="display-1 text-muted mb-4">
-                    <i class="bi bi-pie-chart"></i>
-                </div>
-                <h3 class="text-muted">暂无数据可展示</h3>
-                <p class="text-muted mb-4">请先添加学生成绩数据</p>
-                <a href="{{ url_for('grades') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> 前往添加成绩
-                </a>
-            </div>
+
+<div class="panel">
+    <div class="panel-body">
+        <div class="empty-state">
+            <h3>暂无数据</h3>
+            <p>请先录入学生成绩</p>
+            <a href="{{ url_for('grades') }}" class="btn btn-primary">前往录入</a>
         </div>
     </div>
 </div>
+
 {% endif %}
 {% endblock %}
 
 {% block extra_scripts %}
 {% if has_data %}
 <script>
-// 将后端数据转换为 JSON
 var chartData = {{ chart_data|tojson|safe }};
 
-// 各科平均分柱状图
+var palette = ['#1d4ed8', '#15803d', '#b45309'];
+var pieColors = ['#dc2626', '#ca8a04', '#15803d', '#1d4ed8'];
+var chartFont = '"IBM Plex Sans SC", sans-serif';
+
 var avgChart = echarts.init(document.getElementById('avgChart'));
 avgChart.setOption({
-    tooltip: { trigger: 'axis' },
-    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    color: palette,
+    tooltip: { trigger: 'axis', textStyle: { fontFamily: chartFont } },
+    grid: { left: 48, right: 24, bottom: 32, top: 24 },
     xAxis: {
         type: 'category',
         data: chartData.subject_avgs.categories,
-        axisLabel: { fontSize: 14 }
+        axisLine: { lineStyle: { color: '#e0e0e4' } },
+        axisLabel: { color: '#5c5c66', fontFamily: chartFont }
     },
     yAxis: {
-        type: 'value',
-        name: '分数',
-        min: 0,
-        max: 100
+        type: 'value', min: 0, max: 100,
+        splitLine: { lineStyle: { color: '#f0f0f2' } },
+        axisLabel: { color: '#8b8b96', fontFamily: chartFont }
     },
     series: [{
         type: 'bar',
         data: chartData.subject_avgs.values,
-        itemStyle: {
-            color: function(params) {
-                var colors = ['#5470C6', '#91CC75', '#EE6666'];
-                return colors[params.dataIndex];
-            },
-            borderRadius: [6, 6, 0, 0]
-        },
-        label: {
-            show: true,
-            position: 'top',
-            formatter: '{c} 分',
-            fontSize: 14
-        },
-        barWidth: '50%'
+        barWidth: '40%',
+        itemStyle: { borderRadius: [4, 4, 0, 0] },
+        label: { show: true, position: 'top', fontFamily: chartFont, color: '#5c5c66' }
     }]
 });
 
-// 成绩分布饼图
 var pieChart = echarts.init(document.getElementById('pieChart'));
 pieChart.setOption({
-    tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-    legend: { orient: 'vertical', left: 'left' },
+    color: pieColors,
+    tooltip: { trigger: 'item', textStyle: { fontFamily: chartFont } },
+    legend: { orient: 'vertical', left: 0, top: 'center', textStyle: { fontFamily: chartFont, color: '#5c5c66' } },
     series: [{
         type: 'pie',
-        radius: ['40%', '70%'],
-        center: ['55%', '50%'],
-        avoidLabelOverlap: true,
-        label: { show: true, formatter: '{b}\n{d}%' },
-        emphasis: {
-            label: { fontSize: 16, fontWeight: 'bold' }
-        },
+        radius: ['42%', '68%'],
+        center: ['58%', '50%'],
+        label: { fontFamily: chartFont, color: '#5c5c66' },
         data: chartData.pie_distribution.labels.map(function(label, i) {
-            var colors = ['#FC8452', '#FACC14', '#91CC75', '#5470C6'];
-            return {
-                value: chartData.pie_distribution.values[i],
-                name: label,
-                itemStyle: { color: colors[i] }
-            };
+            return { value: chartData.pie_distribution.values[i], name: label };
         })
     }]
 });
 
-// 学生个人成绩对比
 var studentChart = echarts.init(document.getElementById('studentChart'));
 studentChart.setOption({
-    tooltip: { trigger: 'axis' },
-    legend: { data: ['语文', '数学', '英语'] },
-    grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    color: palette,
+    tooltip: { trigger: 'axis', textStyle: { fontFamily: chartFont } },
+    legend: { data: ['语文', '数学', '英语'], textStyle: { fontFamily: chartFont, color: '#5c5c66' } },
+    grid: { left: 48, right: 24, bottom: 48, top: 40 },
     xAxis: {
         type: 'category',
         data: chartData.student_comparison.names,
-        axisLabel: { rotate: 30 }
+        axisLabel: { rotate: 30, color: '#5c5c66', fontFamily: chartFont },
+        axisLine: { lineStyle: { color: '#e0e0e4' } }
     },
     yAxis: {
-        type: 'value',
-        name: '分数',
-        min: 0,
-        max: 100
+        type: 'value', min: 0, max: 100,
+        splitLine: { lineStyle: { color: '#f0f0f2' } },
+        axisLabel: { color: '#8b8b96', fontFamily: chartFont }
     },
     series: ['语文', '数学', '英语'].map(function(subject) {
-        var colors = { '语文': '#5470C6', '数学': '#91CC75', '英语': '#EE6666' };
         return {
             name: subject,
             type: 'bar',
             data: chartData.student_comparison[subject],
-            itemStyle: { color: colors[subject], borderRadius: [4, 4, 0, 0] },
-            barWidth: '20%'
+            barMaxWidth: 16,
+            itemStyle: { borderRadius: [3, 3, 0, 0] }
         };
     })
 });
 
-// 响应式
 window.addEventListener('resize', function() {
     avgChart.resize();
     pieChart.resize();

@@ -1,120 +1,63 @@
 /**
- * 学生成绩管理与分析系统 - 主脚本
+ * 学生成绩管理系统
  */
 
 $(document).ready(function() {
-    // ===== 自动隐藏消息提示 =====
-    setTimeout(function() {
-        $('.alert-dismissible').alert('close');
-    }, 5000);
+    // 移动端侧边栏
+    $('[data-sidebar-toggle]').on('click', function() {
+        $('#sidebar').toggleClass('open');
+        $('.sidebar-backdrop').toggleClass('show');
+    });
 
-    // ===== 表单输入自动格式化 =====
-    // 学号输入框：只允许数字
+    // 学号：仅数字，最多 8 位
     $('input[name="student_id"]').on('input', function() {
         this.value = this.value.replace(/\D/g, '').slice(0, 8);
     });
 
-    // 分数输入框：限制 0-100
+    // 分数：限制 0–100
     $('input[name="score"]').on('input', function() {
-        var val = parseInt(this.value);
+        var val = parseInt(this.value, 10);
         if (this.value !== '') {
             if (val > 100) this.value = 100;
             if (val < 0) this.value = 0;
         }
     });
 
-    // ===== 表格行点击高亮 =====
-    $('.table tbody tr').on('click', function() {
-        $(this).toggleClass('table-active');
-    });
-
-    // ===== 键盘快捷键导航 =====
+    // 快捷键：Alt+1~5 切换页面
     $(document).on('keydown', function(e) {
-        // Alt+数字 快速导航
-        if (e.altKey) {
-            var navMap = {
-                '1': '/',
-                '2': '/grades',
-                '3': '/analysis',
-                '4': '/charts',
-                '5': '/clean'
-            };
-            var path = navMap[e.key];
-            if (path) {
-                e.preventDefault();
-                window.location.href = path;
-            }
+        if (!e.altKey) return;
+        var navMap = { '1': '/', '2': '/grades', '3': '/analysis', '4': '/charts', '5': '/clean' };
+        if (navMap[e.key]) {
+            e.preventDefault();
+            window.location.href = navMap[e.key];
         }
-    });
-
-    // ===== 页面加载完成后的动画 =====
-    $('.card').each(function(index) {
-        var $card = $(this);
-        setTimeout(function() {
-            $card.css('opacity', '1');
-        }, index * 50);
     });
 });
 
-// ===== 工具函数 =====
-
-/**
- * 格式化分数显示
- * @param {string|number} score - 分数值
- * @returns {string} 格式化后的 HTML 字符串
- */
 function formatScore(score) {
     if (!score || score === 'nan' || score === '') {
-        return '<span class="text-muted">-</span>';
+        return '<span class="score-tag empty">—</span>';
     }
-    var val = parseInt(score);
-    var cls = val >= 90 ? 'bg-success' : val >= 60 ? 'bg-info' : 'bg-danger';
-    return '<span class="badge ' + cls + '">' + score + '</span>';
+    var val = parseInt(score, 10);
+    var cls = val >= 90 ? 'high' : val >= 60 ? 'mid' : 'low';
+    return '<span class="score-tag ' + cls + '">' + score + '</span>';
 }
 
-/**
- * 显示 Toast 消息
- * @param {string} message - 消息内容
- * @param {string} type - 类型：success/error/info/warning
- */
 function showToast(message, type) {
     type = type || 'info';
-    var bgMap = {
-        'success': 'bg-success',
-        'error': 'bg-danger',
-        'info': 'bg-info',
-        'warning': 'bg-warning text-dark'
-    };
-    var toastHtml = '<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">' +
-        '<div class="toast align-items-center text-white ' + (bgMap[type] || 'bg-info') + ' border-0" role="alert">' +
-        '<div class="d-flex">' +
-        '<div class="toast-body">' + message + '</div>' +
-        '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
-        '</div></div></div>';
-
-    var $toastContainer = $(toastHtml).appendTo('body');
-    var toast = new bootstrap.Toast($toastContainer.find('.toast')[0]);
-    toast.show();
-
-    setTimeout(function() {
-        $toastContainer.remove();
-    }, 3000);
+    var clsMap = { success: 'flash-success', error: 'flash-danger', info: 'flash-info', warning: 'flash-warning' };
+    var $el = $('<div class="flash ' + (clsMap[type] || 'flash-info') + '">' + message + '</div>');
+    $('.flash-stack').length
+        ? $('.flash-stack').append($el)
+        : $('.topbar').after('<div class="flash-stack"></div>').next().append($el);
+    setTimeout(function() { $el.fadeOut(200, function() { $(this).remove(); }); }, 3500);
 }
 
-/**
- * 防抖函数
- * @param {Function} func - 要执行的函数
- * @param {number} wait - 等待时间（毫秒）
- * @returns {Function} 防抖后的函数
- */
 function debounce(func, wait) {
     var timeout;
     return function() {
-        var context = this;
-        var args = arguments;
+        var ctx = this, args = arguments;
         clearTimeout(timeout);
-        timeout = setTimeout(function() {
-            func.apply(context, args);
-        }, wait);
+        timeout = setTimeout(function() { func.apply(ctx, args); }, wait);
     };
 }
